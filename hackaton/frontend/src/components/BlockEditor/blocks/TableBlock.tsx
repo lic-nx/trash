@@ -6,15 +6,15 @@ import { X, Table, LayoutGrid, Calendar, GanttChart } from 'lucide-react'
 
 interface TableBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onDelete: () => void
 }
 
 type ViewType = 'table' | 'kanban' | 'calendar' | 'gantt'
 
-export function TableBlock({ block, isFocused, onFocus, onUpdate, onDelete }: TableBlockProps) {
+export function TableBlock({ block, block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
   const content = block.content as { tableId: string | null; view?: ViewType }
   const [view, setView] = useState<ViewType>(content.view || 'table')
   const [showTableSelect, setShowTableSelect] = useState(!content.tableId)

@@ -2,13 +2,13 @@ import { Block } from '../../../stores'
 
 interface QuoteBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }
 
-export function QuoteBlock({ block, isFocused, onFocus, onUpdate, onKeyDown }: QuoteBlockProps) {
+export function QuoteBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: QuoteBlockProps) {
   return (
     <blockquote className="border-l-4 border-gray-300 pl-4 italic">
       <textarea

@@ -2,13 +2,13 @@ import { Block } from '../../../stores'
 
 interface ParagraphBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }
 
-export function ParagraphBlock({ block, isFocused, onFocus, onUpdate, onKeyDown }: ParagraphBlockProps) {
+export function ParagraphBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: ParagraphBlockProps) {
   return (
     <div className="paragraph-block">
       <textarea

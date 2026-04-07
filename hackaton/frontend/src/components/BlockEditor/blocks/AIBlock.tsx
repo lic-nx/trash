@@ -6,12 +6,12 @@ import { Sparkles, Loader2, Copy, RefreshCw } from 'lucide-react'
 
 interface AIBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
 }
 
-export function AIBlock({ block, isFocused, onFocus, onUpdate }: AIBlockProps) {
+export function AIBlock({ block, isFocused = false, onFocus, onUpdate }: AIBlockProps) {
   const content = block.content as { prompt: string; result: string; loading?: boolean }
   const [showPrompt, setShowPrompt] = useState(!content.result)
 

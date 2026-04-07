@@ -4,12 +4,12 @@ import { api } from '../services/api'
 import { Sparkles, Copy, RefreshCw, X, Loader2 } from 'lucide-react'
 
 interface AIPanelProps {
-  documentId: string
+  documentId?: string
   onClose: () => void
   onInsertContent: (content: string) => void
 }
 
-export function AIPanel({ documentId, onClose, onInsertContent }: AIPanelProps) {
+export function AIPanel({ documentId = '', onClose, onInsertContent }: AIPanelProps) {
   const [activeTab, setActiveTab] = useState<'generate' | 'summarize' | 'suggest'>('generate')
   const [prompt, setPrompt] = useState('')
   const [result, setResult] = useState('')

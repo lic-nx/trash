@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid'
 
 interface ListBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }
@@ -16,7 +16,7 @@ interface ListItem {
   checked?: boolean
 }
 
-export function ListBlock({ block, isFocused, onFocus, onUpdate, onKeyDown }: ListBlockProps) {
+export function ListBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: ListBlockProps) {
   const items: ListItem[] = Array.isArray(block.content) 
     ? block.content 
     : [{ id: '1', text: '' }]

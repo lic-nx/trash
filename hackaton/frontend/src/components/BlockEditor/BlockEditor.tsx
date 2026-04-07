@@ -153,7 +153,7 @@ export function BlockEditor({ documentId, onSave }: BlockEditorProps) {
 
         {/* Blocks */}
         <div className="space-y-1">
-          {currentDocument.content.map((block, index) => (
+          {currentDocument.content.map((block) => (
             <div key={block.id} className="group relative">
               {/* Block Controls */}
               <div className="absolute -left-12 top-1 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">

@@ -2,8 +2,8 @@ import { Block } from '../../../stores'
 
 interface DividerBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
 }
 
 export function DividerBlock({ block, isFocused, onFocus }: DividerBlockProps) {

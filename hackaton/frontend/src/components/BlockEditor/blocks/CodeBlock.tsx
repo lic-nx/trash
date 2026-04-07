@@ -3,8 +3,8 @@ import { Block } from '../../../stores'
 
 interface CodeBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }
@@ -15,7 +15,7 @@ const LANGUAGES = [
   'sql', 'bash', 'json', 'yaml', 'markdown'
 ]
 
-export function CodeBlock({ block, isFocused, onFocus, onUpdate, onKeyDown }: CodeBlockProps) {
+export function CodeBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: CodeBlockProps) {
   const [showLanguageSelect, setShowLanguageSelect] = useState(false)
   
   const content = block.content as { language: string; code: string } || { language: 'javascript', code: '' }

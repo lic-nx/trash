@@ -2,8 +2,8 @@ import { Block } from '../../../stores'
 
 interface HeadingBlockProps {
   block: Block
-  isFocused: boolean
-  onFocus: () => void
+  isFocused?: boolean
+  onFocus?: () => void
   onUpdate: (updates: Partial<Block>) => void
   onKeyDown: (e: React.KeyboardEvent) => void
 }
@@ -14,7 +14,7 @@ const headingStyles = {
   heading3: 'text-2xl font-semibold',
 }
 
-export function HeadingBlock({ block, isFocused, onFocus, onUpdate, onKeyDown }: HeadingBlockProps) {
+export function HeadingBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: HeadingBlockProps) {
   const content = block.type === 'heading' 
     ? (block.content as { level: number; text: string })
     : block.content

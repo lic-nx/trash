@@ -1,0 +1,16 @@
+{
+  "name": "wikilive-mock-api",
+  "version": "1.0.0",
+  "description": "Mock API for MWS Tables",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.0"
+  }
+}

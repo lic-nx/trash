@@ -16,7 +16,7 @@ export function TablesPanel({ onClose }: TablesPanelProps) {
   const { data: tables = [], isLoading: tablesLoading } = useQuery({
     queryKey: ['tables'],
     queryFn: async () => {
-      const response = await api.get('/api/tables')
+      const response = await api.get('/tables')
       return response.data
     }
   })
@@ -25,7 +25,7 @@ export function TablesPanel({ onClose }: TablesPanelProps) {
     queryKey: ['table', selectedTable],
     queryFn: async () => {
       if (!selectedTable) return null
-      const response = await api.get(`/api/tables/${selectedTable}`)
+      const response = await api.get(`/tables/${selectedTable}`)
       return response.data
     },
     enabled: !!selectedTable

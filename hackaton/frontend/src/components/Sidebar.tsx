@@ -29,7 +29,7 @@ export function Sidebar({ selectedDocument, onSelectDocument }: SidebarProps) {
   } = useQuery<Document[]>({
     queryKey: ['documents'],
     queryFn: async () => {
-      const response = await api.get('/api/documents')
+      const response = await api.get('/documents')
       return response.data
     },
     retry: 1, // Optional: retry failed requests once
@@ -53,7 +53,7 @@ export function Sidebar({ selectedDocument, onSelectDocument }: SidebarProps) {
     }
     
     try {
-      await api.post('/api/documents', { 
+      await api.post('/documents', { 
         title: title.trim(), 
         content: [] 
       })

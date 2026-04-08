@@ -5,33 +5,36 @@ node_modules/
 # Build artifacts
 dist/
 build/
-*.js
-*.ts
-*.tsx
-*.jsx
-
-# Environment
-.env
-.env.local
-.env.*
-
-# Editors
-.vscode/
-.idea/
-
-# Logs
-*.log
+*.o
+*.obj
+*.out
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.Python
+env/
+venv/
+.venv/
+.ENV
+.python-version
 
-# Temporary files
-*.tmp
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*
+
+# IDE
+.vscode/
+.idea/
 *.swp
 *.swo
+*.tmp
 
 # OS
 .DS_Store
@@ -43,10 +46,16 @@ htmlcov/
 .coverage
 
 # Testing
-.mypy_cache/
 .pytest_cache/
+.mypy_cache/
+.nyc_output/
+coverage/
 
-# Virtual environments
-.venv/
-venv/
+# Distribution / packaging
+.Python
+__pycache__/
+*.pyc
+*$py.class
+*.so
+.VSCodeCounter/
 ```

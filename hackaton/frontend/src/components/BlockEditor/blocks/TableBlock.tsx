@@ -14,7 +14,7 @@ interface TableBlockProps {
 
 type ViewType = 'table' | 'kanban' | 'calendar' | 'gantt'
 
-export function TableBlock({ block, block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
+export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
   const content = block.content as { tableId: string | null; view?: ViewType }
   const [view, setView] = useState<ViewType>(content.view || 'table')
   const [showTableSelect, setShowTableSelect] = useState(!content.tableId)

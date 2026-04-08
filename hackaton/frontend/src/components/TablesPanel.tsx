@@ -60,7 +60,7 @@ export function TablesPanel({ onClose }: TablesPanelProps) {
           </select>
         </div>
 
-        {selectedTable && tableData && (
+        {selectedTable && (
           <>
             <div className="px-2 py-1 border-b flex gap-1">
               <button
@@ -94,14 +94,20 @@ export function TablesPanel({ onClose }: TablesPanelProps) {
                 <div className="flex items-center justify-center h-32">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
                 </div>
-              ) : view === 'table' ? (
-                <TableView table={tableData} />
-              ) : view === 'kanban' ? (
-                <KanbanView table={tableData} />
+              ) : tableData ? (
+                <>
+                  {view === 'table' ? (
+                    <TableView table={tableData} />
+                  ) : view === 'kanban' ? (
+                    <KanbanView table={tableData} />
+                  ) : view === 'calendar' ? (
+                    <CalendarView table={tableData} />
+                  ) : view === 'gantt' ? (
+                    <GanttView table={tableData} />
+                  ) : null}
+                </>
               ) : (
-                <div className="text-center text-gray-400 py-8">
-                  {view.charAt(0).toUpperCase() + view.slice(1)} view coming soon
-                </div>
+                <div className="text-center text-gray-400 py-8">No table data available</div>
               )}
             </div>
           </>
@@ -183,6 +189,115 @@ function KanbanView({ table }: { table: any }) {
           </div>
         </div>
       ))}
+    </div>
+  )
+}
+
+function CalendarView({ table }: { table: any }) {
+  const dateColumn = table?.columns?.find((c: any) => c.type === 'date')
+  
+  if (!dateColumn || !table?.records) {
+    return <div className="p-4 text-center text-gray-400">No date column found</div>
+  }
+
+  const recordsByDate = table.records.reduce((acc: any, record: any) => {
+    const date = record[dateColumn.id]
+    if (!acc[date]) acc[date] = []
+    acc[date].push(record)
+    return acc
+  }, {})
+
+  const today = new Date()
+  const days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date(today)
+    d.setDate(d.getDate() + i)
+    return d.toISOString().split('T')[0]
+  })
+
+  return (
+    <div className="p-2">
+      <div className="grid grid-cols-7 gap-1">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+          <div key={day} className="text-xs text-center text-gray-500 py-1">{day}</div>
+        ))}
+        {days.map(date => {
+          const records = recordsByDate[date] || []
+          return (
+            <div key={date} className="min-h-[60px] border rounded p-1">
+              <div className="text-xs text-gray-400 mb-1">
+                {new Date(date).getDate()}
+              </div>
+              {records.slice(0, 2).map((record: any) => (
+                <div key={record.id} className="text-xs truncate bg-blue-100 rounded px-1 mb-0.5">
+                  {record.title || record.name}
+                </div>
+              ))}
+              {records.length > 2 && (
+                <div className="text-xs text-gray-400">+{records.length - 2} more</div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function GanttView({ table }: { table: any }) {
+  const dateColumn = table?.columns?.find((c: any) => c.type === 'date')
+  
+  if (!dateColumn || !table?.records) {
+    return <div className="p-4 text-center text-gray-400">No date column found</div>
+  }
+
+  const records = table.records
+  const days = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() + i)
+    return d.toISOString().split('T')[0]
+  })
+
+  return (
+    <div className="p-2 overflow-x-auto">
+      <div className="flex">
+        {/* Labels */}
+        <div className="w-32 flex-shrink-0">
+          <div className="h-8 border-b"></div>
+          {records.map((record: any) => (
+            <div key={record.id} className="h-8 border-b flex items-center text-xs truncate pr-2">
+              {record.title || record.name || 'Untitled'}
+            </div>
+          ))}
+        </div>
+        
+        {/* Timeline */}
+        <div className="flex-1">
+          <div className="flex">
+            {days.map(date => (
+              <div key={date} className="w-12 text-xs text-center border-b py-1">
+                {new Date(date).getDate()}
+              </div>
+            ))}
+          </div>
+          {records.map((record: any) => (
+            <div key={record.id} className="h-8 border-b flex items-center relative">
+              {(() => {
+                const recordDate = record[dateColumn.id]
+                const dayIndex = days.indexOf(recordDate)
+                if (dayIndex >= 0) {
+                  return (
+                    <div 
+                      className="absolute h-5 bg-blue-400 rounded" 
+                      style={{ left: `${dayIndex * 48 + 8}px`, width: '48px' }}
+                    />
+                  )
+                }
+                return null
+              })()}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

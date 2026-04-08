@@ -17,7 +17,7 @@ export function AIBlock({ block, isFocused = false, onFocus, onUpdate }: AIBlock
 
   const generateMutation = useMutation({
     mutationFn: async (prompt: string) => {
-      const response = await api.post('/api/ai/generate', { prompt })
+      const response = await api.post('/ai/generate', { prompt })
       return response.data
     },
     onSuccess: (data) => {

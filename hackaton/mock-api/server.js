@@ -3,7 +3,7 @@ import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
 app.use(cors());
 app.use(express.json());
@@ -241,6 +241,6 @@ app.get("/api/search", (req, res) => {
   res.json(results);
 });
 
-app.listen(PORT, () => {
-  console.log(`Mock API server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Mock API server running on http://0.0.0.0:${PORT}`);
 });

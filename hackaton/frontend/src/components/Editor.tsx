@@ -21,7 +21,7 @@ export function Editor({ documentId }: EditorProps) {
     queryKey: ['document', documentId],
     queryFn: async () => {
       if (!documentId) return null
-      const response = await api.get(`/api/documents/${documentId}`)
+      const response = await api.get(`/documents/${documentId}`)
       return response.data
     },
     enabled: !!documentId
@@ -36,7 +36,7 @@ export function Editor({ documentId }: EditorProps) {
 
   const updateMutation = useMutation({
     mutationFn: async (data: { title: string; content: Block[] }) => {
-      const response = await api.put(`/api/documents/${documentId}`, data)
+      const response = await api.put(`/documents/${documentId}`, data)
       return response.data
     },
     onSuccess: () => {

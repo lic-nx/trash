@@ -7,8 +7,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
-const PORT = 3001;
-const MOCK_API = 'http://localhost:3002';
+const PORT = process.env.PORT || 3001;
+const MOCK_API = process.env.MOCK_API_URL || 'http://mock-api:3002';
 
 app.use(cors());
 app.use(express.json());
@@ -69,6 +69,52 @@ app.post('/api/ai/generate', async (req, res) => {
   res.json(await response.json());
 });
 
+app.put('/api/tables/:id/records/:recordId', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/tables/' + req.params.id + '/records/' + req.params.recordId, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+  res.json(await response.json());
+});
+
+app.delete('/api/tables/:id/records/:recordId', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/tables/' + req.params.id + '/records/' + req.params.recordId, {
+    method: 'DELETE'
+  });
+  res.status(response.status).send();
+});
+
+app.delete('/api/documents/:id', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/documents/' + req.params.id, {
+    method: 'DELETE'
+  });
+  res.status(response.status).send();
+});
+
+app.post('/api/ai/suggest', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/ai/suggest', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+  res.json(await response.json());
+});
+
+app.post('/api/ai/summarize', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/ai/summarize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+  res.json(await response.json());
+});
+
+app.get('/api/search', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/search?q=' + encodeURIComponent(req.query.q || ''));
+  res.json(await response.json());
+});
+
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
   socket.on('join-document', (docId) => socket.join('dos:' + docId));
@@ -76,4 +122,4 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('User disconnected:', socket.id));
 });
 
-httpServer.listen(PORT, () => console.log('Backend running on http://localhost:' + PORT));
+httpServer.listen(PORT, '0.0.0.0', () => console.log('Backend running on http://0.0.0.0:' + PORT));

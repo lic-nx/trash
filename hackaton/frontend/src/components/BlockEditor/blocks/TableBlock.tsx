@@ -14,7 +14,7 @@ interface TableBlockProps {
 
 type ViewType = 'table' | 'kanban' | 'calendar' | 'gantt'
 
-export function TableBlock({ block, block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
+export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
   const content = block.content as { tableId: string | null; view?: ViewType }
   const [view, setView] = useState<ViewType>(content.view || 'table')
   const [showTableSelect, setShowTableSelect] = useState(!content.tableId)
@@ -22,7 +22,7 @@ export function TableBlock({ block, block, isFocused = false, onFocus, onUpdate,
   const { data: tables = [], isLoading: tablesLoading } = useQuery({
     queryKey: ['tables'],
     queryFn: async () => {
-      const response = await api.get('/api/tables')
+      const response = await api.get('/tables')
       return response.data
     }
   })
@@ -31,7 +31,7 @@ export function TableBlock({ block, block, isFocused = false, onFocus, onUpdate,
     queryKey: ['table', content.tableId],
     queryFn: async () => {
       if (!content.tableId) return null
-      const response = await api.get(`/api/tables/${content.tableId}`)
+      const response = await api.get(`/tables/${content.tableId}`)
       return response.data
     },
     enabled: !!content.tableId

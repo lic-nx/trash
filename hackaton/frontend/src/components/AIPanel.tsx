@@ -16,7 +16,7 @@ export function AIPanel({ documentId = '', onClose, onInsertContent }: AIPanelPr
 
   const generateMutation = useMutation({
     mutationFn: async (p: string) => {
-      const response = await api.post('/api/ai/generate', { prompt: p })
+      const response = await api.post('/ai/generate', { prompt: p })
       return response.data
     },
     onSuccess: (data) => setResult(data.result)
@@ -24,7 +24,7 @@ export function AIPanel({ documentId = '', onClose, onInsertContent }: AIPanelPr
 
   const suggestMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await api.post('/api/ai/suggest', { content })
+      const response = await api.post('/ai/suggest', { content })
       return response.data
     },
     onSuccess: (data) => setResult(JSON.stringify(data.suggestions, null, 2))
@@ -32,7 +32,7 @@ export function AIPanel({ documentId = '', onClose, onInsertContent }: AIPanelPr
 
   const summarizeMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await api.post('/api/ai/summarize', { content })
+      const response = await api.post('/ai/summarize', { content })
       return response.data
     },
     onSuccess: (data) => setResult(data.summary + '\n\nKey Points:\n' + data.keyPoints.join('\n'))

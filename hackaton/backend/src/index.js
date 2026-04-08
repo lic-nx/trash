@@ -7,8 +7,8 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
-const PORT = 3001;
-const MOCK_API = 'http://localhost:3002';
+const PORT = process.env.PORT || 3001;
+const MOCK_API = process.env.MOCK_API_URL || 'http://mock-api:3002';
 
 app.use(cors());
 app.use(express.json());
@@ -76,4 +76,4 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => console.log('User disconnected:', socket.id));
 });
 
-httpServer.listen(PORT, () => console.log('Backend running on http://localhost:' + PORT));
+httpServer.listen(PORT, '0.0.0.0', () => console.log('Backend running on http://0.0.0.0:' + PORT));

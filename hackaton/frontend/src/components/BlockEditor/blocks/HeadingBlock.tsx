@@ -14,7 +14,7 @@ const headingStyles = {
   heading3: 'text-2xl font-semibold',
 }
 
-export function HeadingBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: HeadingBlockProps) {
+export function HeadingBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: HeadingBlockProps) {
   const content = block.type === 'heading' 
     ? (block.content as { level: number; text: string })
     : block.content

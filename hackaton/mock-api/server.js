@@ -65,6 +65,22 @@ app.get("/api/tables", (req, res) => {
   res.json(tableList);
 });
 
+app.post("/api/tables", (req, res) => {
+  const { name, columns = [] } = req.body;
+  const id = uuidv4();
+  const newTable = {
+    id,
+    name: name || "Untitled Table",
+    columns: columns.length > 0 ? columns : [
+      { id: "title", name: "Title", type: "text" }
+    ],
+    records: [],
+    relations: []
+  };
+  tables.set(id, newTable);
+  res.status(201).json(newTable);
+});
+
 app.get("/api/tables/:id", (req, res) => {
   const table = tables.get(req.params.id);
   if (!table) {

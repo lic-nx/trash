@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Block } from '../../../stores'
 import { api } from '../../../services/api'
-import { X, Table, LayoutGrid, Calendar, GanttChart } from 'lucide-react'
+import { X, Table, LayoutGrid, Calendar, GanttChart, Plus } from 'lucide-react'
 
 interface TableBlockProps {
   block: Block
@@ -14,16 +14,28 @@ interface TableBlockProps {
 
 type ViewType = 'table' | 'kanban' | 'calendar' | 'gantt'
 
-export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDelete }: TableBlockProps) {
+export function TableBlock({ block, onFocus, onUpdate }: TableBlockProps) {
   const content = block.content as { tableId: string | null; view?: ViewType }
   const [view, setView] = useState<ViewType>(content.view || 'table')
   const [showTableSelect, setShowTableSelect] = useState(!content.tableId)
+  const queryClient = useQueryClient()
 
   const { data: tables = [], isLoading: tablesLoading } = useQuery({
     queryKey: ['tables'],
     queryFn: async () => {
       const response = await api.get('/tables')
       return response.data
+    }
+  })
+
+  const createTableMutation = useMutation({
+    mutationFn: async (name: string) => {
+      const response = await api.post('/tables', { name })
+      return response.data
+    },
+    onSuccess: (newTable) => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] })
+      handleTableSelect(newTable.id)
     }
   })
 
@@ -40,6 +52,13 @@ export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDele
   const handleTableSelect = (tableId: string) => {
     onUpdate({ content: { ...content, tableId } })
     setShowTableSelect(false)
+  }
+
+  const handleCreateTable = () => {
+    const tableName = prompt('Enter table name:', 'New Table')
+    if (tableName) {
+      createTableMutation.mutate(tableName)
+    }
   }
 
   const handleViewChange = (newView: ViewType) => {
@@ -63,6 +82,14 @@ export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDele
           <div className="text-center py-4 text-gray-400">Loading tables...</div>
         ) : (
           <div className="space-y-2">
+            <button
+              onClick={handleCreateTable}
+              disabled={createTableMutation.isPending}
+              className="w-full text-left px-3 py-2 rounded hover:bg-green-50 border border-dashed border-green-300 flex items-center gap-2 text-green-600"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{createTableMutation.isPending ? 'Creating...' : 'Create new table'}</span>
+            </button>
             {tables.map((table: any) => (
               <button
                 key={table.id}
@@ -142,7 +169,27 @@ export function TableBlock({ block, isFocused = false, onFocus, onUpdate, onDele
   )
 }
 
-function TableView({ table }: { table: any }) {
+function TableView({ table, onUpdate }: { table: any; onUpdate?: (recordId: string, field: string, value: any) => void }) {
+  const queryClient = useQueryClient()
+  
+  const updateRecordMutation = useMutation({
+    mutationFn: async ({ recordId, field, value }: { recordId: string; field: string; value: any }) => {
+      const response = await api.put(`/tables/${table.id}/records/${recordId}`, { [field]: value })
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['table', table.id] })
+    }
+  })
+
+  const handleCellUpdate = (recordId: string, columnId: string, newValue: any) => {
+    if (onUpdate) {
+      onUpdate(recordId, columnId, newValue)
+    } else {
+      updateRecordMutation.mutate({ recordId, field: columnId, value: newValue })
+    }
+  }
+
   if (!table?.columns || !table?.records) {
     return <div className="p-4 text-center text-gray-400">No data</div>
   }
@@ -164,7 +211,11 @@ function TableView({ table }: { table: any }) {
             <tr key={record.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
               {table.columns.map((col: any) => (
                 <td key={col.id} className="px-3 py-2 border-b">
-                  <CellValue column={col} value={record[col.id]} />
+                  <EditableCell 
+                    column={col} 
+                    value={record[col.id]} 
+                    onChange={(newValue) => handleCellUpdate(record.id, col.id, newValue)}
+                  />
                 </td>
               ))}
             </tr>
@@ -267,7 +318,6 @@ function CalendarView({ table }: { table: any }) {
 
 function GanttView({ table }: { table: any }) {
   const dateColumn = table?.columns?.find((c: any) => c.type === 'date')
-  const titleColumn = table?.columns?.find((c: any) => c.type === 'text')
   
   if (!dateColumn) {
     return <div className="p-4 text-center text-gray-400">No date column found</div>
@@ -326,8 +376,47 @@ function GanttView({ table }: { table: any }) {
   )
 }
 
-function CellValue({ column, value }: { column: any; value: any }) {
+function EditableCell({ column, value, onChange }: { column: any; value: any; onChange: (value: any) => void }) {
+  const [isEditing, setIsEditing] = useState(false)
+  const [localValue, setLocalValue] = useState(value)
+
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+
+  const handleBlur = () => {
+    setIsEditing(false)
+    if (localValue !== value) {
+      onChange(localValue)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleBlur()
+    } else if (e.key === 'Escape') {
+      setLocalValue(value)
+      setIsEditing(false)
+    }
+  }
+
   if (column.type === 'select') {
+    if (isEditing) {
+      return (
+        <select
+          value={localValue || ''}
+          onChange={(e) => setLocalValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {column.options?.map((opt: string) => (
+            <option key={opt} value={opt}>{opt.replace('_', ' ')}</option>
+          ))}
+        </select>
+      )
+    }
     const colorMap: Record<string, string> = {
       done: 'bg-green-100 text-green-700',
       in_progress: 'bg-yellow-100 text-yellow-700',
@@ -337,15 +426,59 @@ function CellValue({ column, value }: { column: any; value: any }) {
       low: 'bg-blue-100 text-blue-700'
     }
     return (
-      <span className={`px-2 py-0.5 rounded text-xs ${colorMap[value] || 'bg-gray-100'}`}>
+      <button
+        onClick={() => setIsEditing(true)}
+        className={`px-2 py-0.5 rounded text-xs ${colorMap[value] || 'bg-gray-100'} hover:opacity-80 cursor-pointer`}
+      >
         {value?.replace('_', ' ')}
-      </span>
+      </button>
     )
   }
   
   if (column.type === 'date') {
-    return <span className="text-xs">{value}</span>
+    if (isEditing) {
+      return (
+        <input
+          type="date"
+          value={localValue || ''}
+          onChange={(e) => setLocalValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          className="w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      )
+    }
+    return (
+      <span onClick={() => setIsEditing(true)} className="text-xs cursor-pointer hover:bg-gray-100 px-1 rounded">
+        {value}
+      </span>
+    )
   }
   
-  return <span>{value}</span>
+  // Text and other types
+  if (isEditing) {
+    return (
+      <input
+        type="text"
+        value={localValue || ''}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        autoFocus
+        className="w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+    )
+  }
+  
+  return (
+    <span 
+      onClick={() => setIsEditing(true)} 
+      className="cursor-pointer hover:bg-gray-100 px-1 rounded min-h-[24px] block"
+    >
+      {value || <span className="text-gray-300">Click to edit</span>}
+    </span>
+  )
 }
+
+// CellValue is kept for backward compatibility but not used in the main table view

@@ -8,7 +8,7 @@ interface QuoteBlockProps {
   onKeyDown: (e: React.KeyboardEvent) => void
 }
 
-export function QuoteBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: QuoteBlockProps) {
+export function QuoteBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: QuoteBlockProps) {
   return (
     <blockquote className="border-l-4 border-gray-300 pl-4 italic">
       <textarea

@@ -32,6 +32,15 @@ app.post('/api/tables/:id/records', async (req, res) => {
   res.status(201).json(await response.json());
 });
 
+app.post('/api/tables', async (req, res) => {
+  const response = await fetch(MOCK_API + '/api/tables', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req.body)
+  });
+  res.status(201).json(await response.json());
+});
+
 app.get('/api/documents', async (req, res) => {
   const response = await fetch(MOCK_API + '/api/documents');
   res.json(await response.json());

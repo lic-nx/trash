@@ -16,7 +16,7 @@ interface ListItem {
   checked?: boolean
 }
 
-export function ListBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: ListBlockProps) {
+export function ListBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: ListBlockProps) {
   const items: ListItem[] = Array.isArray(block.content) 
     ? block.content 
     : [{ id: '1', text: '' }]

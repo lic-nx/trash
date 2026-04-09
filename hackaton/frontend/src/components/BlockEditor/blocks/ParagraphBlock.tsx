@@ -8,9 +8,9 @@ interface ParagraphBlockProps {
   onKeyDown: (e: React.KeyboardEvent) => void
 }
 
-export function ParagraphBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: ParagraphBlockProps) {
+export function ParagraphBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: ParagraphBlockProps) {
   return (
-    <div className="paragraph-block">
+    <div className="paragraph-block relative group">
       <textarea
         value={typeof block.content === 'string' ? block.content : ''}
         onChange={(e) => onUpdate({ content: e.target.value })}
@@ -24,6 +24,11 @@ export function ParagraphBlock({ block, block, isFocused = false, onFocus, onUpd
           overflow: 'hidden'
         }}
       />
+      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+          Type @ to link to table cell
+        </span>
+      </div>
     </div>
   )
 }

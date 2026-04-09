@@ -17,7 +17,7 @@ const calloutTypes = {
   tip: { icon: '💬', bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800' }
 }
 
-export function CalloutBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: CalloutBlockProps) {
+export function CalloutBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: CalloutBlockProps) {
   const [showTypeSelect, setShowTypeSelect] = useState(false)
   
   const content = block.content as { type: keyof typeof calloutTypes; text: string } || { type: 'info', text: '' }

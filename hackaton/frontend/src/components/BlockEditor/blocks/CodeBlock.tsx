@@ -15,7 +15,7 @@ const LANGUAGES = [
   'sql', 'bash', 'json', 'yaml', 'markdown'
 ]
 
-export function CodeBlock({ block, block, isFocused = false, onFocus, onUpdate, onKeyDown }: CodeBlockProps) {
+export function CodeBlock({ block, isFocused = false, onFocus, onUpdate, onKeyDown }: CodeBlockProps) {
   const [showLanguageSelect, setShowLanguageSelect] = useState(false)
   
   const content = block.content as { language: string; code: string } || { language: 'javascript', code: '' }

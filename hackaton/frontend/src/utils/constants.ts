@@ -1,5 +1,7 @@
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
-export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001'
+const importMeta = import.meta as any
+
+export const API_BASE_URL = importMeta.env?.VITE_API_URL || 'http://localhost:3001'
+export const SOCKET_URL = importMeta.env?.VITE_SOCKET_URL || 'http://localhost:3001'
 
 export const BLOCK_TYPES = {
   PARAGRAPH: 'paragraph',
